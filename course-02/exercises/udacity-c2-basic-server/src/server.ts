@@ -12,7 +12,7 @@ import { Car, cars as cars_list } from './cars';
   //default port to listen
   const port = 8082; 
   
-  //use middleware so post bodies 
+  //use mmakedleware so post bodies 
   //are accessable as req.body.{{variable}}
   app.use(bodyParser.json()); 
   app.use(express.urlencoded({ extended: true })) //for requests from forms-like data
@@ -70,15 +70,68 @@ import { Car, cars as cars_list } from './cars';
                 .send(`Welcome to the Cloud, ${name}!`);
   } );
 
+  // @TODO Add an endpoint to GET a list of all cars
+  app.get("/cars/", (req: Request, res: Response) => {
+
+    let all_cars = cars;
+
+    res.status(200).send(all_cars);
+  })
+
   // @TODO Add an endpoint to GET a list of cars
-  // it should be filterable by make with a query paramater
+  // it should be filterable by any parameter in the list with a query paramater
+  app.get("/cars/query", (req: Request, res: Response) => {
+    let {make, type, model, cost, id} = req.query;
+
+    let cars_list = cars;
+
+    // if (!make) {
+    //   return res.status(400)
+    //             .send(`Car make is required`);
+    // }
+
+    cars_list = cars.filter((car) => car.make  === make || car.type === type || car.model === model || car.cost === Number(cost) || car.id === Number(id));
+
+    res.status(200).send(cars_list);
+
+  })
 
   // @TODO Add an endpoint to get a specific car
   // it should require id
   // it should fail gracefully if no matching car is found
+  app.get( "/cars/:id", (req: Request, res: Response) => {
+    let {id} = req.params;
+    
+    const car = cars.filter((car) => car.id === Number(id));
 
+    if(!id){
+      return res.status(400).send("id is required");
+    }
+
+    if (car && car.length === 0){
+      return res.status(400).send('car is not available')
+    }
+
+    res.status(200).send(car);
+  })
   /// @TODO Add an endpoint to post a new car to our list
-  // it should require id, type, model, and cost
+  // it should require make, make, model, and cost
+  app.post("/cars/", (req:Request, res:Response)=>{
+
+    let {make, type, model, cost, id} = req.body;
+
+    if (!make || !id || !type || !model || !cost){
+      return res.status(400).send("make, type, model, cost, id are all required");
+    }
+    
+    const new_car:Car = {
+      make:make, type:type, model:model, cost:cost, id:id
+    }
+
+    cars.push(new_car);
+
+    res.status(201).send(new_car);
+  });
 
   // Start the Server
   app.listen( port, () => {

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { FeedItem } from '../models/FeedItem';
 import { requireAuth } from '../../users/routes/auth.router';
 import * as AWS from '../../../../aws';
+import { strict } from 'assert';
 
 const router: Router = Router();
 
@@ -18,15 +19,36 @@ router.get('/', async (req: Request, res: Response) => {
 
 //@TODO
 //Add an endpoint to GET a specific resource by Primary Key
+// http://localhost:8080/api/v0//feed/byid/:id
+router.get('/byid/:id', async(req: Request, res: Response)=> {
+    let {id} = req.params;
+    if(!id) { 
+        res.status(400).send('user id is required');
+    }
+    const userid:FeedItem = await  FeedItem.findByPk(id);
+    
+    if(userid === null){
+        res.status(401).send('user not found')
+    }
+    res.status(200).send(userid);
+} )
 
 // update a specific resource
-router.patch('/:id', 
-    requireAuth, 
-    async (req: Request, res: Response) => {
-        //@TODO try it yourself
-        res.status(500).send("not implemented")
+router.patch('/:id', requireAuth, async (req: Request, res: Response) => {
+    //@TODO try it yourself
+    // let {ic} = req.params;
+    let {cap, ur} = req.body
+    if (!cap || !ur) {
+        res.status(400).send('Caption and url is required')
+    }
+    const up = await FeedItem.update({caption:cap, url:ur}, {
+        where: {id:2}
+    });
+    if ((up[0]) !== 0) {
+        res.status(200).send('updated successfuly')
+    }
+    res.status(500).send('An error occured while trying to update records')
 });
-
 
 // Get a signed url to put a new item in the bucket
 router.get('/signed-url/:fileName', 

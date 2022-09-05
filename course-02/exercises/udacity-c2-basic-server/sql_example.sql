@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS "public"."make";
 DROP TABLE IF EXISTS "public"."cars";
 
 CREATE TABLE "public"."cars" (
-  id SERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,       
   type TEXT,
   model TEXT,
   cost INT,
@@ -25,10 +25,10 @@ CREATE TABLE "public"."make" (
 INSERT INTO "public"."make" ("name") VALUES ('toyota'), ('tesla'), ('ford');
 
 CREATE VIEW joined AS
-SELECT cars.type, cars.cost, cars.model, make.name
+SELECT cars.id, cars.type, cars.cost, cars.model, make.name
   FROM cars
   INNER JOIN make ON (cars.make_id = make.id)
-  ORDER BY cost DESC  LIMIT 30;
+  ORDER BY id DESC  LIMIT 30;
   
 CREATE VIEW toyotas AS
 SELECT cars.type, cars.cost, cars.model, make.name
