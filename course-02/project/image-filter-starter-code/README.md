@@ -1,10 +1,10 @@
 # Udagram Image Filtering Microservice
 
 ###  Git repository
-https://github.com/ice-devs/cloud-developer.git
+> https://github.com/ice-devs/cloud-developer.git
 
 ### EBS endpoint
-http://ice-dev-app.us-east-1.elasticbeanstalk.com/filteredimage?image_url=
+> http://ice-dev-app.us-east-1.elasticbeanstalk.com/filteredimage?image_url=
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Stand Out (Optional)
